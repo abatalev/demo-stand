@@ -1,0 +1,11 @@
+FROM maven:3.6.3 as build
+COPY configurer/pom.xml /work/pom.xml
+RUN cd /work; mvn -B dependency:go-offline 
+COPY configurer/src/ /work/src/
+RUN cd /work; mvn clean install 
+FROM ghcr.io/abatalev/liberica@sha256:9c5591bb8c69fc77d726913df4cfe89c7de36e9efd358595c305e1b0271fa160
+COPY app.sh /opt/app/app.sh
+RUN chmod +x /opt/app/app.sh
+COPY --from=build work/target/app.jar opt/app/app.jar
+EXPOSE 8080
+ENTRYPOINT [ "/opt/app/app.sh" ]

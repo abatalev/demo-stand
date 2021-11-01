@@ -1,0 +1,4 @@
+FROM flyway/flyway:7.15.0-alpine
+COPY initdb/ /flyway/
+WORKDIR /flyway/
+CMD [ "migrate" ]

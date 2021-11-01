@@ -1,0 +1,77 @@
+version: "3.1"
+
+services: 
+  static:
+    image: nginx
+    ports:
+    - 8089:80
+    volumes:
+    - ./config/:/usr/share/nginx/html/
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.27.0  
+    ports:
+      - 16686:16686 
+
+  mq:
+    image: ibmcom/mq:9.2.2.0-r1
+    ports:
+      - 1414:1414
+      - 9443:9443
+    environment:
+      - LICENSE=accept
+      - MQ_QMGR_NAME=MQ1
+
+  db:
+    image: postgres:13.4-alpine3.14
+    environment:
+      POSTGRES_PASSWORD: example
+
+  init:
+    image: abatalev/initdb:2021-09-26  
+    depends_on:
+      - db
+  
+  configurer:
+   image: abatalev/configurer:2021-09-26   
+
+  balancer:
+   image: abatalev/balancer:2021-09-26
+   depends_on:
+   - configurer
+
+  actions:
+    image: abatalev/actions:2021-09-26
+    ports:
+     - 9080:8080
+    depends_on: 
+    - configurer
+    - balancer
+    - db
+    - mq
+    - jaeger
+
+  prometheus:
+    image: prom/prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml --log.level=debug
+    ports:
+    - 9090:9090
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+    links:
+      - configurer
+      - balancer
+      - actions
+
+  grafana:
+    image: grafana/grafana:8.2.1
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+  #   build: './config/grafana'
+  #   volumes:
+  #     - ./config/grafana:/var/lib/grafana
