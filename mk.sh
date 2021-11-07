@@ -1,8 +1,12 @@
 #!/bin/bash
-BUILD_ACTIONS=0
+BUILD_ACTIONS=1
 BUILD_CONFIGURER=0
 BUILD_BALANCER=0
 BUILD_INITDB=0
+
+CDIR=$(pwd)
+
+cd "${CDIR}/build"
 
 if [ "${BUILD_ACTIONS}" == "1" ]; then
     echo "### build actions"
@@ -24,5 +28,7 @@ if [ "${BUILD_INITDB}" == "1" ]; then
     docker build -t abatalev/initdb:2021-09-26 -f Dockerfile.initdb .
     if [  $? -ne 0  ]; then exit 1; fi;
 fi
+
+cd "${CDIR}"
 echo "### launch docker-compose"
 docker-compose up # --scale actions=2
