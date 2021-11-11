@@ -1,5 +1,7 @@
 package com.batal.balancer.rest;
 
+import com.batal.balancer.dto.v1.ActionConfig;
+import com.batal.balancer.dto.v1.ActionsConfig;
 import com.batal.balancer.dto.v1.BalancerData;
 import com.batal.balancer.model.Group;
 import com.batal.balancer.model.Instance;
@@ -24,11 +26,14 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static java.util.stream.Collectors.toMap;
+
 @RestController
 public class V1Controller {
     private static final Logger log = LoggerFactory.getLogger(V1Controller.class);
     private Map<String, Group> instances = new HashMap<>(); // TODO atomic
     private Queue<Notify> notifyQueue = new ConcurrentLinkedQueue<>();
+    private ActionsConfig config = null;
 
     @Scheduled(fixedDelayString = "5000")
     public void reconfig() {
@@ -36,14 +41,14 @@ public class V1Controller {
         Tracer tracer = GlobalTracer.get();
         Span span = tracer.buildSpan("reconfig").start();
         try {
-            String config = WebClient.builder() // TODO use loaded data
+            config = WebClient.builder() // TODO use loaded data
                     .filter(new TracingExchangeFilterFunction(tracer,
                             Collections.singletonList(
                                     new WebClientSpanDecorator.StandardTags())))
                     //.filter(logRequest())
                     .build().get()
                     .uri("http://configurer:8080/api/config/v1/balancer") // TODO use config data
-                    .retrieve().bodyToMono(String.class).block();
+                    .retrieve().bodyToMono(ActionsConfig.class).block();
         } finally {
             span.finish();
         }
@@ -62,10 +67,11 @@ public class V1Controller {
                 Instance instance = getInstance(notify.getHostname(), notify.getAppType());
                 instance.setLastAccess(notify.getTime());
             }
+            Map<String, ActionConfig> map = getActionsMap();
             // log.info("> recalc rate");
             for (String key : instances.keySet()) {
                 // log.info("> recalc rate for " + key);
-                instances.get(key).remoteDeadAndRecalc(currentTime);
+                instances.get(key).remoteDeadAndRecalc(currentTime, map);
             }
         } finally {
             span.finish();
@@ -106,9 +112,18 @@ public class V1Controller {
             if (actions.size() == 0) {
                 instance.setActive(true);
             }
-            instance.rebalance();
+            instance.rebalance(getActionsMap());
             actions.put(hostname, instance);
         }
         return instance;
+    }
+
+    private Map<String, ActionConfig> getActionsMap() {
+        if (config == null) {
+            return new HashMap<>();
+        }
+
+        return config.getActions().stream()
+                .collect(toMap(ActionConfig::getId, action -> action, (a, b) -> b));
     }
 }

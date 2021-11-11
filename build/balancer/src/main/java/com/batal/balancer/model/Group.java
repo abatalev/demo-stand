@@ -1,5 +1,6 @@
 package com.batal.balancer.model;
 
+import com.batal.balancer.dto.v1.ActionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +23,9 @@ public class Group {
         return instances;
     }
 
-    public void remoteDeadAndRecalc(LocalDateTime currentTime) {
+    public void remoteDeadAndRecalc(LocalDateTime currentTime, Map<String, ActionConfig> map) {
         remoteDead(currentTime);
-        recalc();
+        recalc(map);
     }
 
     public void remoteDead(LocalDateTime currentTime) {
@@ -45,7 +46,7 @@ public class Group {
         }
     }
 
-    public void recalc() {
+    public void recalc(Map<String, ActionConfig> map) {
 //        log.info("> recalcRate");
         for (Map.Entry<String, Instance> entry : instances.entrySet()) {
             if (entry.getValue().isActive()) {
@@ -54,7 +55,7 @@ public class Group {
         }
         for (Map.Entry<String, Instance> entry : instances.entrySet()) {
             entry.getValue().setActive(true);
-            entry.getValue().rebalance();
+            entry.getValue().rebalance(map);
             return;
         }
     }

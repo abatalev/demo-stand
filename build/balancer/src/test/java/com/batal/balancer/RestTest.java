@@ -16,7 +16,6 @@ public class RestTest {
 
     @Test
     public void check() throws Exception {
-
         RestTemplate restTemplate = new RestTemplateBuilder(
                 rt -> rt.getInterceptors()
                         .add((request, body, execution) -> {
@@ -28,6 +27,6 @@ public class RestTest {
                         .getForObject(
                                 "http://localhost:" + port + "/api/balancer/v1/actions/x",
                                 String.class))
-                .contains("{\"rates\":{\"a1\":5,\"a2\":5,\"yaru\":5,\"googlecom\":5}}");
+                .contains("{\"rates\":{}");
     }
 }

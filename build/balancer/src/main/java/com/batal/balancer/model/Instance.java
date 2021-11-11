@@ -1,5 +1,6 @@
 package com.batal.balancer.model;
 
+import com.batal.balancer.dto.v1.ActionConfig;
 import com.batal.balancer.dto.v1.BalancerData;
 
 import java.time.LocalDateTime;
@@ -49,15 +50,14 @@ public class Instance {
         this.data = data;
     }
 
-    public void rebalance() {
+    public void rebalance(Map<String, ActionConfig> map) {
         int rate = isActive() ? 1 : 0; // TODO calc rate
 
         BalancerData data = new BalancerData();
         Map<String, Integer> rates = new HashMap<>();
-        rates.put("yaru", 5 * rate); // TODO read real data
-        rates.put("googlecom", 5 * rate);
-        rates.put("a1", 5 * rate);
-        rates.put("a2", 5 * rate);
+        for (Map.Entry<String, ActionConfig> entry : map.entrySet()) {
+            rates.put(entry.getKey(), entry.getValue().getRate() * rate);
+        }
         data.setRates(rates);
         setData(data);
     }
