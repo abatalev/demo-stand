@@ -12,6 +12,7 @@ import com.batal.actions.model.fixers.LogFixer;
 import com.batal.actions.model.interfaces.*;
 import com.batal.actions.model.savers.DbSaver;
 import com.batal.actions.model.savers.MqSaver;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +29,17 @@ public class ActionParser {
 
     private final DbService dbService;
     private final JmsService jmsService;
+    private final MeterRegistry meterRegistry;
 
     @Autowired
     public ActionParser(
             DbService dbService,
-            JmsService jmsService
+            JmsService jmsService,
+            MeterRegistry meterRegistry
     ) {
         this.dbService = dbService;
         this.jmsService = jmsService;
+        this.meterRegistry = meterRegistry;
     }
 
     public List<GeneralAction> parse(List<ActionConfig> actions) {
@@ -132,6 +136,9 @@ public class ActionParser {
         }
         if (obj instanceof DbServiceSetter) {
             ((DbServiceSetter) obj).setDbService(dbService);
+        }
+        if (obj instanceof MeterRegistrySetter) {
+            ((MeterRegistrySetter) obj).setMetricRegistry(meterRegistry);
         }
         return obj;
     }
