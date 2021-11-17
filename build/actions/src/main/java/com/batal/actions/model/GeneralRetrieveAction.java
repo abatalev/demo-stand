@@ -73,7 +73,7 @@ public class GeneralRetrieveAction implements GeneralAction, TaskExecutorSetter 
             if (!z.isNegative()) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(z.toMillis());
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             i++;

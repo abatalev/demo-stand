@@ -13,7 +13,7 @@ import java.util.List;
 @Timed
 public class DbService {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public DbService(JdbcTemplate jdbcTemplate) {
@@ -36,7 +36,7 @@ public class DbService {
                         "update " + tableName +
                                 " set status = 1 " +
                                 " where id = ?",
-                        new Object[]{message.getId()});
+                        message.getId());
                 return message;
             }
         }
@@ -44,12 +44,12 @@ public class DbService {
     }
 
     @Transactional
-    public void fix(String tableName, String msgId, int code, String remark){
+    public void fix(String tableName, String msgId, int code, String remark) {
         jdbcTemplate.update("update " + tableName + " set status = ? where id = ?", code, msgId);
     }
 
     @Transactional
-    public void put(String tableName, Message message){
+    public void put(String tableName, Message message) {
         jdbcTemplate.update("insert into " + tableName + " (id,status,payload) values (?,?,?)",
                 message.getId(), 0, message.getPayload());
     }

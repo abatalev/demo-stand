@@ -70,7 +70,7 @@ public class GeneralSenderAction implements GeneralAction, TaskExecutorSetter, Q
                 if (!z.isNegative()) {
                     try {
                         TimeUnit.MILLISECONDS.sleep(z.toMillis());
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
                 currentTime = now();

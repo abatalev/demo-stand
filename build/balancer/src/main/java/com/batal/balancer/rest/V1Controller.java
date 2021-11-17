@@ -119,11 +119,7 @@ public class V1Controller {
     }
 
     private Map<String, ActionConfig> getActionsMap() {
-        if (config == null) {
-            return new HashMap<>();
-        }
-
-        return config.getActions().stream()
-                .collect(toMap(ActionConfig::getId, action -> action, (a, b) -> b));
+        return config == null ? new HashMap<>()
+                : config.getActions().stream().collect(toMap(ActionConfig::getId, action -> action, (a, b) -> b));
     }
 }

@@ -115,11 +115,6 @@ public class ActionService {
             return;
         }
 
-//        if (executor.getActiveCount() >= executor.getMaxPoolSize()) {
-//            log.info("busy");
-//            return;
-//        }
-
         if (action instanceof QueueSetter) {
             Queue<Message> queue = queueMap.get(action.getId());
             if (queue == null) {

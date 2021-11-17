@@ -4,9 +4,7 @@ import com.batal.configurer.dtos.v1.ActionConfig;
 import com.batal.configurer.dtos.v1.ActionsConfig;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class ActionMapper {
