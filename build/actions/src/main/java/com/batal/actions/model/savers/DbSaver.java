@@ -44,6 +44,7 @@ public class DbSaver implements Saver, DbServiceSetter {
                     span.setTag("result", "ok");
                 } catch (RuntimeException e) {
                     log.error("error: {} {}", message.getId(), e.getMessage());
+                    span.setTag("error", "true");
                     span.setTag("result", "error," + e.getMessage());
                 }
             }

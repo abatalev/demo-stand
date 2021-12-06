@@ -57,6 +57,7 @@ public class MqFetcher implements Fetcher, JmsServiceSetter, MeterRegistrySetter
                     return null;
                 } catch (Throwable e) {
                     log.error("error " + e.getMessage());
+                    span.setTag("error", "true");
                     span.setTag("result", "error," + e.getMessage());
                     gaugeSet.inc("error");
                     return null;

@@ -69,6 +69,7 @@ public class BalancerLoader {
                     consumer.accept(data);
                     return data;
                 } catch (Throwable e) {
+                    span.setTag("error", "true");
                     span.setTag("result", "error," + e.getMessage());
                     return null;
                 }

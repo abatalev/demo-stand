@@ -44,6 +44,7 @@ public class DbFetcher implements Fetcher, DbServiceSetter {
                     return null;
                 } catch (RuntimeException e) {
                     log.error("error: " + e.getMessage());
+                    span.setTag("error", "true");
                     span.setTag("result", "error," + e.getMessage());
                     return null; // TODO throws MessageException
                 }

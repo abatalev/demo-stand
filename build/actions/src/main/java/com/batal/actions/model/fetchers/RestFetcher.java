@@ -43,6 +43,7 @@ public class RestFetcher implements Fetcher {
                     span.setTag("id", id);
                     return new Message(id, payload);
                 } catch (Exception e) {
+                    span.setTag("error", "true");
                     span.setTag("result", "error:" + e.getMessage());
                     log.error("error {}", e.getMessage());
                     return null; // TODO throws MessageException

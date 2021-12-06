@@ -36,6 +36,7 @@ public class DbFixer implements Fixer, DbServiceSetter {
                     span.setTag("result", "ok");
                     log.debug("fix {} {} {}", msgId, code, msg);
                 } catch (Exception e) {
+                    span.setTag("error", "true");
                     span.setTag("result", "error," + e.getMessage());
                     log.error("error {} {}", msgId, e.getMessage());
                 }

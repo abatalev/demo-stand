@@ -76,6 +76,7 @@ public class ConfigLoader {
                 consumer.accept(newData);
                 return newData;
             } catch (Throwable e) {
+                span.setTag("error", "true");
                 span.setTag("result", "error," + e.getMessage());
                 return null;
             }
