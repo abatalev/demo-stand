@@ -1,0 +1,8 @@
+excludes:
+- .prj2hash.yaml
+- .settings/**/*
+- .classpath
+- .project
+- target/**/*
+- .idea/**/*
+- "*.iml"
