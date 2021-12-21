@@ -1,17 +1,17 @@
 version: "3.1"
 
-services:
+services: 
   static:
-    image: nginx:1.21.3
+    image: nginx
     ports:
-      - 8089:80
+    - 8089:80
     volumes:
-      - ./config/:/usr/share/nginx/html/
+    - ./config/:/usr/share/nginx/html/
 
   jaeger:
-    image: jaegertracing/all-in-one:1.27.0
+    image: jaegertracing/all-in-one:1.27.0  
     ports:
-      - 16686:16686
+      - 16686:16686 
 
   mq:
     image: ibmcom/mq:9.2.2.0-r1
@@ -28,37 +28,36 @@ services:
       POSTGRES_PASSWORD: example
 
   init:
-    image: abatalev/initdb:2021-10-28
+    image: abatalev/initdb:XX_INITDB_XX
     depends_on:
       - db
-
+  
   configurer:
-    image: abatalev/configurer:2021-10-28
-    depends_on:
-      - jaeger
+   image: abatalev/configurer:XX_CONFIGURER_XX
 
   balancer:
-    image: abatalev/balancer:2021-10-28
-    depends_on:
-      - configurer
-      - jaeger
+   image: abatalev/balancer:XX_BALANCER_XX
+   depends_on:
+   - configurer
 
   actions:
-    image: abatalev/actions:2021-10-28
+    image: abatalev/actions:XX_ACTIONS_XX
     ports:
-      - 9080:8080
-    depends_on:
-      - configurer
-      - balancer
-      - db
-      - mq
-      - jaeger
+     - 9080:8080
+    environment:
+      - MQ_HOST=mq
+    depends_on: 
+    - configurer
+    - balancer
+    - db
+    - mq
+    - jaeger
 
   prometheus:
-    image: prom/prometheus:v2.31.1
+    image: prom/prometheus
     command: --config.file=/etc/prometheus/prometheus.yml --log.level=debug
     ports:
-      - 9090:9090
+    - 9090:9090
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
     links:
@@ -67,7 +66,7 @@ services:
       - actions
 
   grafana:
-    image: grafana/grafana:8.2.3
+    image: grafana/grafana:8.2.1
     ports:
       - 3000:3000
     environment:
@@ -75,4 +74,6 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
       - prometheus
-  
+  #   build: './config/grafana'
+  #   volumes:
+  #     - ./config/grafana:/var/lib/grafana
