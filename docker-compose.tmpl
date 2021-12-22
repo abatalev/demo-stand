@@ -28,20 +28,20 @@ services:
       POSTGRES_PASSWORD: example
 
   init:
-    image: abatalev/initdb:XX_INITDB_XX
+    image: abatalev/initdb:2021-10-28
     depends_on:
       - db
   
   configurer:
-   image: abatalev/configurer:XX_CONFIGURER_XX
+   image: abatalev/configurer:2021-10-28
 
   balancer:
-   image: abatalev/balancer:XX_BALANCER_XX
+   image: abatalev/balancer:2021-10-28
    depends_on:
    - configurer
 
   actions:
-    image: abatalev/actions:XX_ACTIONS_XX
+    image: abatalev/actions:2021-10-28
     ports:
      - 9080:8080
     environment:
