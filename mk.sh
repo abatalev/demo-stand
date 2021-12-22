@@ -19,6 +19,21 @@ function image_exist() {
     docker image list | grep ${1} | awk ' {print $2;}' | grep ${2} | wc -l
 }
 
+function image_build() {
+    B_PRJ=$1
+    I_PRJ=$2
+    V_PRJ=$3
+    D_PRJ=$4
+    N_PRJ=$5
+    if [ ${B_PRJ} == 0 ]; then
+        echo "### build $N_PRJ"
+        docker build -t $I_PRJ:$V_PRJ -f $D_PRJ .
+        if [  $? -ne 0  ]; then exit 1; fi
+    else 
+        echo "### Build $N_PRJ skipped. Image $I_PRJ:$V_PRJ already exist"    
+    fi
+}
+
 if [ -f "prj2hash" ]; then
     V_ACTIONS=$(./prj2hash -short build/actions)
     V_CONFIGURER=$(./prj2hash -short build/configurer)
@@ -31,49 +46,20 @@ if [ -f "prj2hash" ]; then
     B_INITDB=$(image_exist $I_INITDB $V_INITDB)
 fi
 
-IV_ACTIONS=$I_ACTIONS:$V_ACTIONS
-IV_BALANCER=$I_BALANCER:$V_BALANCER
-IV_CONFIGURER=$I_CONFIGURER:$V_CONFIGURER
-IV_INITDB=$I_INITDB:$V_INITDB
-
 CDIR=$(pwd)
 cd "${CDIR}/build"
-if [ ${B_ACTIONS} == 0 ]; then
-    echo "### build actions"
-    docker build -t $IV_ACTIONS -f Dockerfile.actions .
-    if [  $? -ne 0  ]; then exit 1; fi
-else 
-   echo "### build actions skipped.    $V_ACTIONS"    
-fi
-if [ ${B_CONFIGURER} == 0 ]; then
-    echo "### build configurer"
-    docker build -t $IV_CONFIGURER -f Dockerfile.configurer .
-    if [  $? -ne 0  ]; then exit 1; fi;
-else 
-   echo "### build configurer skipped. $V_CONFIGURER"    
-fi
-if [ ${B_BALANCER} == 0 ]; then
-    echo "### build balancer"
-    docker build -t $IV_BALANCER -f Dockerfile.balancer .
-    if [  $? -ne 0  ]; then exit 1; fi;
-else 
-   echo "### build balancer skipped.   $V_BALANCER"    
-fi
-if [ ${B_INITDB} == 0 ]; then
-    echo "### build initdb"
-    docker build -t $IV_INITDB -f Dockerfile.initdb .
-    if [  $? -ne 0  ]; then exit 1; fi;
-else 
-   echo "### build initdb skipped.     $V_INITDB"    
-fi
+image_build $B_ACTIONS $I_ACTIONS $V_ACTIONS Dockerfile.actions "actions"
+image_build $B_CONFIGURER $I_CONFIGURER $V_CONFIGURER Dockerfile.configurer "configurer"
+image_build $B_BALANCER $I_BALANCER $V_BALANCER Dockerfile.balancer "balancer"
+image_build $B_INITDB $I_INITDB $V_INITDB Dockerfile.initdb "initdb"
 
 cd "${CDIR}"
 echo "### create docker-compose"
 cp docker-compose.tmpl docker-compose.yaml
-IMAGE_VERSION=$IV_ACTIONS yq e -i '.services.actions.image = strenv(IMAGE_VERSION)' docker-compose.yaml
-IMAGE_VERSION=$IV_BALANCER yq e -i '.services.balancer.image = strenv(IMAGE_VERSION)' docker-compose.yaml
-IMAGE_VERSION=$IV_CONFIGURER yq e -i '.services.configurer.image = strenv(IMAGE_VERSION)' docker-compose.yaml
-IMAGE_VERSION=$IV_INITDB yq e -i '.services.init.image = strenv(IMAGE_VERSION)' docker-compose.yaml
+IMAGE_VERSION=$I_ACTIONS:$V_ACTIONS yq e -i '.services.actions.image = strenv(IMAGE_VERSION)' docker-compose.yaml
+IMAGE_VERSION=$I_BALANCER:$V_BALANCER yq e -i '.services.balancer.image = strenv(IMAGE_VERSION)' docker-compose.yaml
+IMAGE_VERSION=$I_CONFIGURER:$V_CONFIGURER yq e -i '.services.configurer.image = strenv(IMAGE_VERSION)' docker-compose.yaml
+IMAGE_VERSION=$I_INITDB:$V_INITDB yq e -i '.services.init.image = strenv(IMAGE_VERSION)' docker-compose.yaml
 
 echo "### launch docker-compose"
 docker-compose up # --scale actions=2
