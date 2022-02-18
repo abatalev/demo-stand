@@ -1,6 +1,6 @@
 package com.batal.actions.services;
 
-import com.batal.actions.model.Message;
+import com.batal.actions.model.messages.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class JmsService {
         }
         // TODO Destination replyTo = message.getJMSReplyTo();
         String correlationID = message.getJMSCorrelationID();
-        return new com.batal.actions.model.Message(
+        return new Message(
                 message.getJMSMessageID().trim(),
                 message.getBody(Object.class),
                 correlationID != null ? correlationID.trim() : null);

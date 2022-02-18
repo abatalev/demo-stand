@@ -3,6 +3,7 @@ package com.batal.actions.model;
 import com.batal.actions.model.interfaces.GeneralAction;
 import com.batal.actions.model.interfaces.SimpleAction;
 import com.batal.actions.model.interfaces.TaskExecutorSetter;
+import com.batal.actions.model.messages.Message;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
@@ -54,9 +55,9 @@ public class GeneralRetrieveAction implements GeneralAction, TaskExecutorSetter 
                         if (message != null) {
                             try {
                                 action.save(span, action.process(message));
-                                action.fix(span, message.getId(), 2, "done");
+                                action.fix(span, message, 2, "done");
                             } catch (Throwable e) {
-                                action.fix(span, message.getId(), -1, e.getMessage());
+                                action.fix(span, message, -1, e.getMessage());
                                 e.printStackTrace();
                             }
                         }

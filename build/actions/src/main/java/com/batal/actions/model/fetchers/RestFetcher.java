@@ -1,6 +1,6 @@
 package com.batal.actions.model.fetchers;
 
-import com.batal.actions.model.Message;
+import com.batal.actions.model.messages.Message;
 import com.batal.actions.model.interfaces.Fetcher;
 import io.opentracing.Scope;
 import io.opentracing.Span;

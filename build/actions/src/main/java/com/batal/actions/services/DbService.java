@@ -1,6 +1,6 @@
 package com.batal.actions.services;
 
-import com.batal.actions.model.Message;
+import com.batal.actions.model.messages.Message;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

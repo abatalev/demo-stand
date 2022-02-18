@@ -1,10 +1,9 @@
 package com.batal.actions.model.fetchers;
 
-import com.batal.actions.model.Message;
+import com.batal.actions.model.messages.Message;
 import com.batal.actions.model.savers.MqSaver;
 import com.batal.actions.services.JmsService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

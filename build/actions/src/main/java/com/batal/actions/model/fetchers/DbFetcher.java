@@ -1,6 +1,6 @@
 package com.batal.actions.model.fetchers;
 
-import com.batal.actions.model.Message;
+import com.batal.actions.model.messages.Message;
 import com.batal.actions.model.interfaces.DbServiceSetter;
 import com.batal.actions.model.interfaces.Fetcher;
 import com.batal.actions.model.savers.DbSaver;

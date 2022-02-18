@@ -1,6 +1,6 @@
 package com.batal.actions.model.actions;
 
-import com.batal.actions.model.Message;
+import com.batal.actions.model.messages.Message;
 import com.batal.actions.model.interfaces.Fetcher;
 import com.batal.actions.model.interfaces.Fixer;
 import com.batal.actions.model.interfaces.Saver;
@@ -45,7 +45,7 @@ public class StandardAction implements SimpleAction {
     }
 
     @Override
-    public void fix(Span parentSpan, String msgId, int code, String msg) {
-        fixer.fix(parentSpan, msgId, code, msg);
+    public void fix(Span parentSpan, Message obj, int code, String msg) {
+        fixer.fix(parentSpan, obj, code, msg);
     }
 }

@@ -1,6 +1,7 @@
 package com.batal.actions.model;
 
 import com.batal.actions.model.interfaces.SimpleAction;
+import com.batal.actions.model.messages.Message;
 import io.opentracing.Span;
 import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -68,7 +69,7 @@ public class GeneralRetrieveActionTest {
         }
 
         @Override
-        public void fix(Span parentSpan, String msgId, int code, String msg) {
+        public void fix(Span parentSpan, Message obj, int code, String msg) {
 
         }
     }

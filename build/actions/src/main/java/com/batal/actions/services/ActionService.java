@@ -3,7 +3,7 @@ package com.batal.actions.services;
 import com.batal.actions.model.ActionsConfigAndTime;
 import com.batal.actions.model.BalancerData;
 import com.batal.actions.model.BalancerDataAndTime;
-import com.batal.actions.model.Message;
+import com.batal.actions.model.messages.Message;
 import com.batal.actions.model.interfaces.GeneralAction;
 import com.batal.actions.model.interfaces.QueueSetter;
 import com.batal.actions.model.interfaces.TaskExecutorSetter;

@@ -1,4 +1,4 @@
-package com.batal.actions.model;
+package com.batal.actions.model.messages;
 
 public class Message {
     private String id;

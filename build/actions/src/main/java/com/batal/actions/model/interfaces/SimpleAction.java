@@ -1,6 +1,6 @@
 package com.batal.actions.model.interfaces;
 
-import com.batal.actions.model.Message;
+import com.batal.actions.model.messages.Message;
 import io.opentracing.Span;
 
 public interface SimpleAction {
@@ -12,5 +12,5 @@ public interface SimpleAction {
 
     void save(Span parentSpan,Message obj);
 
-    void fix(Span parentSpan, String msgId, int code, String msg);
+    void fix(Span parentSpan, Message obj, int code, String msg);
 }

@@ -1,6 +1,6 @@
 package com.batal.actions.model.savers;
 
-import com.batal.actions.model.Message;
+import com.batal.actions.model.messages.Message;
 import com.batal.actions.model.interfaces.DbServiceSetter;
 import com.batal.actions.model.interfaces.Saver;
 import com.batal.actions.services.DbService;

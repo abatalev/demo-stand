@@ -1,5 +1,6 @@
 package com.batal.actions.model.fixers;
 
+import com.batal.actions.model.messages.Message;
 import com.batal.actions.model.interfaces.DbServiceSetter;
 import com.batal.actions.model.interfaces.Fixer;
 import com.batal.actions.services.DbService;
@@ -26,11 +27,12 @@ public class DbFixer implements Fixer, DbServiceSetter {
     }
 
     @Override
-    public void fix(Span parentSpan, String msgId, int code, String msg) {
+    public void fix(Span parentSpan, Message obj, int code, String msg) {
         Tracer tracer = GlobalTracer.get();
         Span span = tracer.buildSpan("dbfix").asChildOf(parentSpan).start();
         try {
             try (Scope ignored = tracer.activateSpan(span)) {
+                String msgId = obj.getId();
                 try {
                     dbService.fix(tableName, msgId, code, msg);
                     span.setTag("result", "ok");

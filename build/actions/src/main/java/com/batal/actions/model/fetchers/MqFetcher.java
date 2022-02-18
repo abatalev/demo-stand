@@ -1,7 +1,7 @@
 package com.batal.actions.model.fetchers;
 
 import com.batal.actions.metrics.GaugeSet;
-import com.batal.actions.model.Message;
+import com.batal.actions.model.messages.Message;
 import com.batal.actions.model.interfaces.Fetcher;
 import com.batal.actions.model.interfaces.JmsServiceSetter;
 import com.batal.actions.model.interfaces.MeterRegistrySetter;
@@ -36,7 +36,7 @@ public class MqFetcher implements Fetcher, JmsServiceSetter, MeterRegistrySetter
         this.gaugeSet.setMetricRegistry(meterRegistry);
     }
 
-    public com.batal.actions.model.Message get(Span parentSpan) {
+    public Message get(Span parentSpan) {
         Tracer tracer = GlobalTracer.get();
         Span span = tracer.buildSpan("mqfetcher").asChildOf(parentSpan).start();
         span.setTag("queueName", queueName);

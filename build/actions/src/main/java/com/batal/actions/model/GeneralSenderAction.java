@@ -4,6 +4,7 @@ import com.batal.actions.model.interfaces.GeneralAction;
 import com.batal.actions.model.interfaces.QueueSetter;
 import com.batal.actions.model.interfaces.SimpleAction;
 import com.batal.actions.model.interfaces.TaskExecutorSetter;
+import com.batal.actions.model.messages.Message;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.util.GlobalTracer;
@@ -54,7 +55,7 @@ public class GeneralSenderAction implements GeneralAction, TaskExecutorSetter, Q
                         Message message = action.fetch(span);
                         queue.add(action.process(message));
                     } catch (Exception e) {
-                        action.fix(span, "", -1, e.getMessage());
+                        action.fix(span, null, -1, e.getMessage());
                     }
                 });
             }
@@ -63,7 +64,7 @@ public class GeneralSenderAction implements GeneralAction, TaskExecutorSetter, Q
                 if (!queue.isEmpty()) {
                     Message message = queue.poll();
                     action.save(span, message);
-                    action.fix(span, message.getId(), 2, "done");
+                    action.fix(span, message, 2, "done");
                     i++;
                 }
                 Duration z = between(now(), currentTime.plus(runDuration));
