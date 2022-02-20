@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: actions
+  name: actions
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: actions
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: actions
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/actuator/prometheus'
+        prometheus.io/port: '8080'
+    spec:
+      containers:
+        - name: actions
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          env:
+          - name: MQ_HOST
+            value: stand-mq
+          ports:
+            - containerPort: 8080
+              name: webapp
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+      restartPolicy: Always
+status: {}

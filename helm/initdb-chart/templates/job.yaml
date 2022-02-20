@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "initdb-job"
+  labels:
+    app: initdb
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "3"
+spec:
+  template:
+    metadata:
+      name: initdb
+      labels:
+        app: initdb
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: initdb
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          resources: 
+            requests:
+              cpu: 50m

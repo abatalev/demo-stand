@@ -1,6 +1,7 @@
 .DS_Store
 docker-compose.yaml
 **/target/
+cache/
 
 ### STS ###
 .apt_generated
@@ -29,3 +30,5 @@ docker-compose.yaml
 
 ### VS Code ###
 .vscode/
+prj2hash
+**/charts/*.tgz
