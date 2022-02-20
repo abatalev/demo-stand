@@ -1,4 +1,4 @@
-balancer:
+balancer-chart:
   image:
     repository: abatalev/balancer
     tag: "efd8272b"

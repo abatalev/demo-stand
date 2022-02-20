@@ -138,8 +138,8 @@ IMAGE_VERSION=$I_ACTIONS yq e -i '.actions-chart.image.repository = strenv(IMAGE
 IMAGE_VERSION=$V_ACTIONS yq e -i '.actions-chart.image.tag = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
 IMAGE_VERSION=$I_CONFIGURER yq e -i '.configurer-chart.image.repository = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
 IMAGE_VERSION=$V_CONFIGURER yq e -i '.configurer-chart.image.tag = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
-IMAGE_VERSION=$I_BALANCER yq e -i '.balancer.image.repository = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
-IMAGE_VERSION=$V_BALANCER yq e -i '.balancer.image.tag = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
+IMAGE_VERSION=$I_BALANCER yq e -i '.balancer-chart.image.repository = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
+IMAGE_VERSION=$V_BALANCER yq e -i '.balancer-chart.image.tag = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
 IMAGE_VERSION=$I_INITDB yq e -i '.initdb-chart.image.repository = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
 IMAGE_VERSION=$V_INITDB yq e -i '.initdb-chart.image.tag = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
 

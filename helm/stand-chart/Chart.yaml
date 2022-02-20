@@ -11,7 +11,7 @@ dependencies:
   - name: configurer-chart
     version: ~0.1.0
     repository: file://../configurer-chart/
-  - name: balancer
+  - name: balancer-chart
     version: ~0.0.1
     repository: file://../balancer-chart/
   - name: actions-chart
