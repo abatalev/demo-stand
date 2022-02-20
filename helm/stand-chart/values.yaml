@@ -14,29 +14,13 @@ initdb-chart:
   image:
     repository: abatalev/initdb
     tag: "884d9d84"
-# kube-prometheus-stack:
-#   fullnameOverride: prometheus
-#   alertmanager:
-#     enabled: false
-#   grafana:
-#     enabled: false
-#   kubeStateMetrics:
-#     enabled: false
-
-# global:
-#   postgresql:
-#     postgresqlPassword: example
 postgresql:
-  # username: postgres
   fullnameOverride: db
   postgresqlDatabase: postgres
   postgresqlPassword: example
   resources:
     requests:
       cpu: 100m
-  # image:
-  #   repository: rhel8/postgresql-13
-  #   tag: 1-28
   metrics:
     enabled: false
     serviceMonitor:
@@ -66,107 +50,15 @@ ibm-mqadvanced-server-dev:
   log:
     debug: true
   image:
-    # tag: 9.1.5.0-r2
-    # tag: 9.2.2.0-r1
     tag: 9.2.3.0-r1
   queueManager:
     dev:
       secret:
         name: mq-secret
         adminPasswordKey: adminPassword
-        # appPasswordKey: appPassword
     name: MQ1
 jaeger-all-in-one:
   fullnameOverride: jaeger
   resources:
     requests:
       cpu: 20m
-grafana-operator:
-  operator:
-    podSecurityContext:
-      enabled: false
-    containerSecurityContext:
-      enabled: false
-    resources:
-      requests:
-        cpu: 20m
-  grafana:
-    podSecurityContext:
-      enabled: false
-    containerSecurityContext:
-      enabled: false
-    resources:
-      requests:
-        cpu: 20m
-# --[ END OF FILE ]-------------------------------------
-# Default values for stand-chart.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-replicaCount: 1
-image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
-podAnnotations: {}
-podSecurityContext: {}
-# fsGroup: 2000
-
-securityContext: {}
-# capabilities:
-#   drop:
-#   - ALL
-# readOnlyRootFilesystem: true
-# runAsNonRoot: true
-# runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 80
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-  # kubernetes.io/ingress.class: nginx
-  # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-resources: {}
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-# limits:
-#   cpu: 100m
-#   memory: 128Mi
-# requests:
-#   cpu: 100m
-#   memory: 128Mi
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-nodeSelector: {}
-tolerations: []
-affinity: {}
