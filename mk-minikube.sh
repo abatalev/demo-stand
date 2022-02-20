@@ -134,14 +134,18 @@ else
     echo "### CACHE disabled"    
 fi
 
-IMAGE_VERSION=$I_ACTIONS yq e -i '.actions-chart.image.repository = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
-IMAGE_VERSION=$V_ACTIONS yq e -i '.actions-chart.image.tag = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
-IMAGE_VERSION=$I_CONFIGURER yq e -i '.configurer-chart.image.repository = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
-IMAGE_VERSION=$V_CONFIGURER yq e -i '.configurer-chart.image.tag = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
-IMAGE_VERSION=$I_BALANCER yq e -i '.balancer-chart.image.repository = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
-IMAGE_VERSION=$V_BALANCER yq e -i '.balancer-chart.image.tag = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
-IMAGE_VERSION=$I_INITDB yq e -i '.initdb-chart.image.repository = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
-IMAGE_VERSION=$V_INITDB yq e -i '.initdb-chart.image.tag = strenv(IMAGE_VERSION)' ./helm/stand-chart/values.yaml
+if [ ! -f "./my.yaml" ]; then
+    touch ./my.yaml
+fi
+
+IMAGE_VERSION=$I_ACTIONS yq e -i '.actions-chart.image.repository = strenv(IMAGE_VERSION)' ./my.yaml
+IMAGE_VERSION=$V_ACTIONS yq e -i '.actions-chart.image.tag = strenv(IMAGE_VERSION)' ./my.yaml
+IMAGE_VERSION=$I_CONFIGURER yq e -i '.configurer-chart.image.repository = strenv(IMAGE_VERSION)' ./my.yaml
+IMAGE_VERSION=$V_CONFIGURER yq e -i '.configurer-chart.image.tag = strenv(IMAGE_VERSION)' ./my.yaml
+IMAGE_VERSION=$I_BALANCER yq e -i '.balancer-chart.image.repository = strenv(IMAGE_VERSION)' ./my.yaml
+IMAGE_VERSION=$V_BALANCER yq e -i '.balancer-chart.image.tag = strenv(IMAGE_VERSION)' ./my.yaml
+IMAGE_VERSION=$I_INITDB yq e -i '.initdb-chart.image.repository = strenv(IMAGE_VERSION)' ./my.yaml
+IMAGE_VERSION=$V_INITDB yq e -i '.initdb-chart.image.tag = strenv(IMAGE_VERSION)' ./my.yaml
 
 echo "### HELM: update dependency  ============================================"
 helm dependency update helm/stand-chart
@@ -150,7 +154,7 @@ HELM_EXISTS=$(helm ls | grep "${HELM_NAME}" | wc -l --)
 if [ ${HELM_EXISTS} == 0 ]; then
     if [ "${HELM_STATE}" == "install" ]; then
         echo "### HELM: install  ====================================================="
-        helm install ${HELM_NAME} helm/stand-chart
+        helm install ${HELM_NAME} helm/stand-chart -f ./my.yaml
     fi
 else 
     if [ "${HELM_STATE}" == "delete" ]; then
@@ -159,7 +163,7 @@ else
     fi
     if [ "${HELM_STATE}" == "install" ]; then
         echo "### HELM: upgrade  ====================================================="
-        helm upgrade ${HELM_NAME} helm/stand-chart
+        helm upgrade ${HELM_NAME} helm/stand-chart -f ./my.yaml
     fi
 fi
 

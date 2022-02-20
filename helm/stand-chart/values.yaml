@@ -1,19 +1,19 @@
 balancer-chart:
   image:
     repository: abatalev/balancer
-    tag: "efd8272b"
+    tag: "2021-10-28"
 configurer-chart:
   image:
     repository: abatalev/configurer
-    tag: "477f4708"
+    tag: "2021-10-28"
 actions-chart:
   image:
     repository: abatalev/actions
-    tag: "84c6e058"
+    tag: "2021-10-28"
 initdb-chart:
   image:
     repository: abatalev/initdb
-    tag: "884d9d84"
+    tag: "2021-10-28"
 postgresql:
   fullnameOverride: db
   postgresqlDatabase: postgres

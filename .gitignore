@@ -32,3 +32,5 @@ cache/
 .vscode/
 prj2hash
 **/charts/*.tgz
+**/Chart.lock
+my.yaml
