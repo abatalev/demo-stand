@@ -1,5 +1,6 @@
 .DS_Store
 docker-compose.yaml
+prj2hash
 **/target/
 cache/
 
@@ -30,7 +31,9 @@ cache/
 
 ### VS Code ###
 .vscode/
-prj2hash
+.settings/
+
+## HELM ##
 **/charts/*.tgz
 **/Chart.lock
 my.yaml

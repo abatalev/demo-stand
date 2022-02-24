@@ -1,10 +1,19 @@
 #!/bin/bash
 
+# ----------------------------
+#
+# $ crc delete
+# $ crc cleanup
+# $ crc setup
+# $ crc start --log-level debug
+#
+# ----------------------------
+
 USE_CACHE=1
-USE_COMPOSE=1
+USE_COMPOSE=0
 USE_MINIKUBE=0
-USE_OPENSHIFT=0
-USE_PODMAN=0
+USE_OPENSHIFT=1
+USE_PODMAN=1
 
 HELM_NAME=stand
 
