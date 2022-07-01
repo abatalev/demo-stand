@@ -1,19 +1,9 @@
 #!/bin/bash
-B_ACTIONS=1
-B_CONFIGURER=1
-B_BALANCER=1
-B_INITDB=1
 
-I_GROUP="abatalev"
-I_ACTIONS="${I_GROUP}/actions"
-I_BALANCER="${I_GROUP}/balancer"
-I_CONFIGURER="${I_GROUP}/configurer"
-I_INITDB="${I_GROUP}/initdb"
-
-V_ACTIONS="2021-10-28"
-V_CONFIGURER="2021-10-28"
-V_BALANCER="2021-10-28"
-V_INITDB="2021-10-28"
+PRJ_IMAGEGROUP="abatalev"
+PRJ_IMAGEVERSION="2021-10-28"
+PRJ_MODULES="actions balancer configurer initdb"
+CDIR=$(pwd)
 
 function image_exist() {
     docker image list | grep ${1} | awk ' {print $2;}' | grep ${2} | wc -l
@@ -34,32 +24,34 @@ function image_build() {
     fi
 }
 
-if [ -f "prj2hash" ]; then
-    V_ACTIONS=$(./prj2hash -short build/actions)
-    V_CONFIGURER=$(./prj2hash -short build/configurer)
-    V_BALANCER=$(./prj2hash -short build/balancer)
-    V_INITDB=$(./prj2hash -short build/initdb)
+function build_project() {
+    PRJ_NAME=$1
+    PRJ_NEEDBUILD=1
+    PRJ_IMAGE="${PRJ_IMAGEGROUP}/${PRJ_NAME}"
+    PRJ_VERSION="${PRJ_IMAGEVERSION}"
+    
+    cd "${CDIR}"
+    if [ -f "prj2hash" ]; then
+        PRJ_VERSION=$(./prj2hash -short build/${PRJ_NAME})
+        PRJ_NEEDBUILD=$(image_exist $PRJ_IMAGE $PRJ_VERSION)
+    fi
+    cd "${CDIR}/build"
+    image_build $PRJ_NEEDBUILD $PRJ_IMAGE $PRJ_VERSION "Dockerfile.${PRJ_NAME}" "${PRJ_NAME}"
+    cd "${CDIR}"
+    IMAGE_VERSION=$PRJ_IMAGE:$PRJ_VERSION yq e -i ".services.${PRJ_NAME}.image = strenv(IMAGE_VERSION)" docker-compose.yaml
+}
 
-    B_ACTIONS=$(image_exist $I_ACTIONS $V_ACTIONS)
-    B_CONFIGURER=$(image_exist $I_CONFIGURER $V_CONFIGURER)
-    B_BALANCER=$(image_exist $I_BALANCER $V_BALANCER)
-    B_INITDB=$(image_exist $I_INITDB $V_INITDB)
-fi
+function build_all() {
+    echo "### create docker-compose"
+    cp docker-compose.tmpl docker-compose.yaml
+    for prj_name in ${1}
+    do
+        build_project "${prj_name}"
+    done
 
-CDIR=$(pwd)
-cd "${CDIR}/build"
-image_build $B_ACTIONS $I_ACTIONS $V_ACTIONS Dockerfile.actions "actions"
-image_build $B_CONFIGURER $I_CONFIGURER $V_CONFIGURER Dockerfile.configurer "configurer"
-image_build $B_BALANCER $I_BALANCER $V_BALANCER Dockerfile.balancer "balancer"
-image_build $B_INITDB $I_INITDB $V_INITDB Dockerfile.initdb "initdb"
+    cd "${CDIR}"
+    echo "### launch docker-compose"
+    docker-compose up # --scale actions=2
+}
 
-cd "${CDIR}"
-echo "### create docker-compose"
-cp docker-compose.tmpl docker-compose.yaml
-IMAGE_VERSION=$I_ACTIONS:$V_ACTIONS yq e -i '.services.actions.image = strenv(IMAGE_VERSION)' docker-compose.yaml
-IMAGE_VERSION=$I_BALANCER:$V_BALANCER yq e -i '.services.balancer.image = strenv(IMAGE_VERSION)' docker-compose.yaml
-IMAGE_VERSION=$I_CONFIGURER:$V_CONFIGURER yq e -i '.services.configurer.image = strenv(IMAGE_VERSION)' docker-compose.yaml
-IMAGE_VERSION=$I_INITDB:$V_INITDB yq e -i '.services.init.image = strenv(IMAGE_VERSION)' docker-compose.yaml
-
-echo "### launch docker-compose"
-docker-compose up # --scale actions=2
+build_all "${PRJ_MODULES}"

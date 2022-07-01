@@ -27,7 +27,7 @@ services:
     environment:
       POSTGRES_PASSWORD: example
 
-  init:
+  initdb:
     image: abatalev/initdb:2021-10-28
     depends_on:
       - db
