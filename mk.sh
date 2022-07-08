@@ -7,7 +7,9 @@ PRJ_MODULES="actions balancer configurer initdb"
 CDIR=$(pwd)
 
 function image_exist() {
-    docker image list | grep ${1} | awk ' {print $2;}' | grep ${2} | wc -l
+    I_PRJ=$1
+    V_PRJ=$2
+    docker image list | grep $I_PRJ | awk ' {print $2;}' | grep $V_PRJ | wc -l
 }
 
 function image_build() {
@@ -78,7 +80,7 @@ function build_all() {
 
     cd "${CDIR}"
     echo "### launch docker-compose"
-    docker-compose up # --scale actions=2
+    docker-compose up --remove-orphans # --scale actions=2
 }
 
 build_all "${PRJ_MODULES}"
