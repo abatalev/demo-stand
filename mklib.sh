@@ -57,7 +57,7 @@ function load_image() {
 
 function build_project() {
     PRJ_NAME=$1
-    PRJ_NEEDBUILD=1
+    PRJ_NEEDBUILD=0
     PRJ_IMAGE="${PRJ_IMAGEGROUP}/${PRJ_NAME}"
     PRJ_VERSION="${PRJ_IMAGEVERSION}"
     
@@ -169,7 +169,39 @@ function helm_run() {
     fi
 }
 
+
+function install_program() {
+    OSNAME=$(uname)
+    if [ "$OSNAME" == "Darwin" ]; then 
+        echo "### Installing $1"
+        brew update
+        brew install $1
+    else 
+        echo "### Script stopped"
+    fi
+}
+
+function check_program() {
+    X=$(which $1)
+    if [ "${X}" == "" ]; then
+        install_program "$2"
+    fi 
+}
+
 function build_all() {
+
+    if [[ $USE_OPENSHIFT == 1 || $USE_MINIKUBE == 1 || $USE_COMPOSE == 1 ]];  then 
+        echo "### Starting"
+    else
+        echo "### Error! Use not defined"
+        exit 1
+    fi
+
+    check_program jq jq
+    check_program kubectl kubernetes-cli
+    check_program helm helm
+    check_program minikube minikube
+    check_program docker-compose docker-compose
 
     echo "" > "${CDIR}/my.yaml"
 
