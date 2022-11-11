@@ -197,7 +197,7 @@ function build_all() {
         exit 1
     fi
 
-    check_program jq jq
+    check_program yq yq
     check_program kubectl kubernetes-cli
     check_program helm helm
     check_program minikube minikube
