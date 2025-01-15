@@ -14,6 +14,21 @@ HELM_STATE="install"
 PRJ_IMAGEGROUP="abatalev"
 PRJ_IMAGEVERSION="2021-10-28"
 
-source ./mklib.sh
+CDIR=$(pwd)
+
+function setup_mklib() {
+    if [ ! -f tools/mklib/mklib.sh ]; then
+        if [ -d tools ]; then
+            mkdir tools
+        fi
+        cd tools
+        git clone http://localhost:3000/andrey/mklib.git
+    fi
+}
+
+setup_mklib
+cd ${CDIR}
+
+source ${CDIR}/tools/mklib/mklib.sh
 
 build_all "actions balancer configurer initdb"
