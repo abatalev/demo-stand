@@ -82,6 +82,16 @@ function build_project() {
 }
 
 function minikube_setup() {
+    # load to cache docker-images
+    for i in `find . -name "Dockerfile.*" -exec grep FROM {} \; | awk '{ print $2 }' | sort | uniq`
+    do
+        echo "  # Load docker image $i"
+        x1=$(echo $i | awk -F":" '{print $1}' -)
+        x2=$(echo $i | awk -F":" '{print $2}' -)
+        x3=$(basename $x1)
+        save_image $x3 $x1 $x2 
+    done
+
     # => check status
     minikube status > /dev/null
     if [ $? != 0 ]; then
@@ -107,6 +117,16 @@ function minikube_setup() {
         kubectl create -f minikube/stand-namespace.yaml
     fi
     kubectl config set-context $(kubectl config current-context) --namespace=stand
+
+    # load in minikube images from cache
+    for i in `find . -name "Dockerfile.*" -exec grep FROM {} \; | awk '{ print $2 }' | sort | uniq`
+    do
+        echo "  # Load docker image $i to minikube"
+        x1=$(echo $i | awk -F":" '{print $1}' -)
+        x2=$(echo $i | awk -F":" '{print $2}' -)
+        x3=$(basename $x1)
+        load_image $x3 $x1 $x2 
+    done
 }
 
 function openshift_setup() {
@@ -149,6 +169,7 @@ function openshift_setup() {
 function helm_run() {
     STANDID=$1
     echo "### HELM: update dependency  ============================================"
+    helm dependency update helm/stand-chart
     helm dependency update $STANDID
 
     HELM_EXISTS=$(helm ls | grep "${HELM_NAME}" | wc -l --)
@@ -169,15 +190,19 @@ function helm_run() {
     fi
 }
 
-
 function install_program() {
     OSNAME=$(uname)
     if [ "$OSNAME" == "Darwin" ]; then 
         echo "### Installing $1"
         brew update
         brew install $1
-    else 
-        echo "### Script stopped"
+    elif [ "$OSNAME" == "Linux" ]; then
+        LINUXNAME=$(hostnamectl | awk -F: '/^Opera/ { print $2 }')
+        if [ "$LINUXNAME" == "Arch Linux" ]; then
+            pacman -S $1
+        else
+            echo "### Script stopped"
+        fi
     fi
 }
 
