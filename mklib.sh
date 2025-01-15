@@ -2,6 +2,37 @@
 
 CDIR=$(pwd)
 
+PRJ2HASH_EXE=
+
+function check_prj2hash() {
+    if [ -f "./prj2hash" ]; then
+        PRJ2HASH_EXE="./prj2hash"
+        return 
+    fi
+    if [ -f "./tools/prj2hash" ]; then
+        PRJ2HASH_EXE="./tools/prj2hash"
+        return 
+    fi
+
+    GOLANG=$(command -v go)
+    if [ "x$GOLANG" == "x" ]; then
+        return
+    fi
+
+    if [ ! -d "${CDIR}/tools" ]; then
+        mkdir "${CDIR}/tools"
+    fi
+
+    cd "${CDIR}/tools"
+    git clone https://github.com/abatalev/prj2hash.git prj2hash.git
+    cd "${CDIR}/tools/prj2hash.git"
+    ./build.sh
+    cd "${CDIR}"
+    cp tools/prj2hash.git/prj2hash tools/prj2hash
+    rm -Rf ${CDIR}/tools/prj2hash.git/
+    PRJ2HASH_EXE="./tools/prj2hash"
+}
+
 DOCKER_BIN=docker
 if [ $USE_PODMAN == 1 ]; then
     DOCKER_BIN=podman
@@ -62,11 +93,11 @@ function build_project() {
     PRJ_VERSION="${PRJ_IMAGEVERSION}"
     
     cd "${CDIR}"
-    if [ -f "prj2hash" ]; then
-        PRJ_VERSION=$(./prj2hash -short build/${PRJ_NAME})
+    if [ "x${PRJ2HASH_EXE}" != "x" ]; then
+        PRJ_VERSION=$(${PRJ2HASH_EXE} -short build/${PRJ_NAME})
     fi
     load_image ${PRJ_NAME} ${PRJ_IMAGE} ${PRJ_VERSION}
-    if [ -f "prj2hash" ]; then
+    if [ "x${PRJ2HASH_EXE}" != "x" ]; then
         PRJ_NEEDBUILD=$(image_exist $PRJ_IMAGE $PRJ_VERSION)
     fi
     cd "${CDIR}/build"
@@ -227,6 +258,7 @@ function build_all() {
     check_program helm helm
     check_program minikube minikube
     check_program docker-compose docker-compose
+    check_prj2hash
 
     echo "" > "${CDIR}/my.yaml"
 
