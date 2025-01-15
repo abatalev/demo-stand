@@ -54,7 +54,7 @@ services:
     - jaeger
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v3.1.0
     command: --config.file=/etc/prometheus/prometheus.yml --log.level=debug
     ports:
     - 9090:9090
@@ -68,7 +68,7 @@ services:
   grafana:
     image: grafana/grafana:8.2.1
     ports:
-      - 3000:3000
+      - 3001:3000
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
