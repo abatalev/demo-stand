@@ -3,6 +3,7 @@ docker-compose.yaml
 prj2hash
 **/target/
 cache/
+tools/
 
 ### STS ###
 .apt_generated
