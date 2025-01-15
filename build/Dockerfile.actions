@@ -1,9 +1,9 @@
-FROM maven:3.6.3 as build
+FROM maven:3.6.3 AS build
 COPY actions/pom.xml /work/pom.xml
 RUN cd /work; mvn -B dependency:go-offline 
 COPY actions/src/ /work/src/
 RUN cd /work; mvn clean install 
-FROM ghcr.io/abatalev/liberica@sha256:9c5591bb8c69fc77d726913df4cfe89c7de36e9efd358595c305e1b0271fa160
+FROM ghcr.io/abatalev/liberica:17.0.13-12-jre-alpine3.16-ttf
 COPY app.sh /opt/app/app.sh
 RUN chmod +x /opt/app/app.sh
 COPY --from=build work/target/app.jar opt/app/app.jar
