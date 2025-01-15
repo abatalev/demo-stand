@@ -19,10 +19,12 @@ public class GeneralSenderActionTest {
     public void checkGeneralSenderActionWithSmallDelay() {
         int[] x = new int[1];
         GeneralSenderAction senderAction = new GeneralSenderAction(new MySimpleAction(x, 150));
-        senderAction.setExecutor(getThreadPoolTaskExecutor());
+        ThreadPoolTaskExecutor executor = getThreadPoolTaskExecutor();
+        senderAction.setExecutor(executor);
         senderAction.setQueue(new ConcurrentLinkedQueue<>());
         senderAction.run(now().plus(ofSeconds(1)), 4);
-        assertEquals(3, x[0]);
+        executor.shutdown();
+        assertEquals(4, x[0]);
     }
 
     private ThreadPoolTaskExecutor getThreadPoolTaskExecutor() {

@@ -18,9 +18,11 @@ public class GeneralRetrieveActionTest {
     public void chck() {
         int[] x = new int[1];
         GeneralRetrieveAction senderAction = new GeneralRetrieveAction(new MySimpleAction(x, 150));
-        senderAction.setExecutor(getThreadPoolTaskExecutor());
+        ThreadPoolTaskExecutor executor = getThreadPoolTaskExecutor();
+        senderAction.setExecutor(executor);
         senderAction.run(now().plus(ofSeconds(1)), 4);
-        assertEquals(4, x[0]);
+        executor.shutdown();
+        assertEquals(5, x[0]);
     }
 
     private ThreadPoolTaskExecutor getThreadPoolTaskExecutor() {
