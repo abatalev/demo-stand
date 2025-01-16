@@ -18,7 +18,7 @@ CDIR=$(pwd)
 
 function setup_mklib() {
     if [ ! -f tools/mklib/mklib.sh ]; then
-        if [ -d tools ]; then
+        if [ ! -d tools ]; then
             mkdir tools
         fi
         cd tools
