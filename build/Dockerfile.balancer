@@ -3,7 +3,7 @@ COPY balancer/pom.xml /work/pom.xml
 RUN cd /work; mvn -B dependency:go-offline 
 COPY balancer/src/ /work/src/
 RUN cd /work; mvn clean install 
-FROM ghcr.io/abatalev/liberica:17.0.13-12-jre-alpine3.16-ttf
+FROM bellsoft/liberica-openjre-alpine-musl:21.0.8-12
 COPY app.sh /opt/app/app.sh
 RUN chmod +x /opt/app/app.sh
 COPY --from=build work/target/app.jar opt/app/app.jar
